@@ -1,10 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_list/database/firebase_helper.dart';
 
 class Utility {
   static Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignIn googleSignIn = kIsWeb
+        ? GoogleSignIn(
+            clientId: dotenv.env['CLIENT_ID'],
+          )
+        : GoogleSignIn();
     try {
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();

@@ -285,6 +285,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/web/
 /firebase.json
 .firebase
 

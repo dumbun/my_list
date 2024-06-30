@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta
+      name="google-signin-client_id"
+      content="460606008066-j8mjl8o31vjlij6deaqgkn0v0tooaqnl.apps.googleusercontent.com"
+    />
     <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -34,21 +38,28 @@
   <body>
     <script src="flutter_bootstrap.js" async></script>
     <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script> -->
     <!-- Firebase Configuration -->
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDEh5H0bwd83PHoffBqh7NEl_3bo2qgq50",
+        authDomain: "my-list-dcc10.firebaseapp.com",
+        projectId: "my-list-dcc10",
+        storageBucket: "my-list-dcc10.appspot.com",
+        messagingSenderId: "460606008066",
+        appId: "1:460606008066:web:5286f0fde7fe9aaf9d701b",
+        measurementId: "G-SRSZ2KM74F",
+      };
 
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
     </script>
-    <!-- Firebase Configuration -->
   </body>
 </html>

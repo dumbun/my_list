@@ -52,7 +52,7 @@ flutter:
 
   assets:
     - assets/icons/
-    - .env
+    - key.env
 
   # fonts:
   #   - family: Schyler

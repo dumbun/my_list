@@ -32,7 +32,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await dotenv.load(fileName: "keys.env");
+  await dotenv.load(fileName: ".env");
   GoogleFonts();
   runApp(const ProviderScope(child: MyApp()));
 }

@@ -5,19 +5,6 @@
       name="google-signin-client_id"
       content="460606008066-j8mjl8o31vjlij6deaqgkn0v0tooaqnl.apps.googleusercontent.com"
     />
-    <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
     <base href="$FLUTTER_BASE_HREF" />
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
@@ -39,14 +26,10 @@
     <script src="flutter_bootstrap.js" async></script>
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <!-- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script> -->
     <!-- Firebase Configuration -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-
       const firebaseConfig = {
         apiKey: "AIzaSyDEh5H0bwd83PHoffBqh7NEl_3bo2qgq50",
         authDomain: "my-list-dcc10.firebaseapp.com",
@@ -56,7 +39,6 @@
         appId: "1:460606008066:web:5286f0fde7fe9aaf9d701b",
         measurementId: "G-SRSZ2KM74F",
       };
-
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);

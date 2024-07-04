@@ -15,7 +15,7 @@ import 'package:my_list/date_utile.dart';
 import 'package:my_list/models/todo_model.dart';
 import 'package:my_list/routes/routes.dart';
 
-class TodoDetailsView extends StatefulWidget {
+class TodoDetailsView extends ConsumerStatefulWidget {
   final String id;
   final Todo todo;
   const TodoDetailsView({
@@ -25,10 +25,10 @@ class TodoDetailsView extends StatefulWidget {
   });
 
   @override
-  State<TodoDetailsView> createState() => _TodoDetailsViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TodoDetailsViewState();
 }
 
-class _TodoDetailsViewState extends State<TodoDetailsView> {
+class _TodoDetailsViewState extends ConsumerState<TodoDetailsView> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _discriptionController = TextEditingController();
   final TextEditingController _subTaskController = TextEditingController();
@@ -51,10 +51,15 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
   @override
   Widget build(BuildContext context) {
     final AppBar appBar = AppBar(
-      actions: [
-        _buildLodingWidget(),
+      actions: const [
+        Padding(
+          padding: EdgeInsets.all(12),
+          child: CircularLoadingWidget(),
+        ),
       ],
-      title: Text(DateConvertUtils.formate(widget.todo.reminderTime)),
+      title: Text(
+        DateConvertUtils.formate(widget.todo.reminderTime),
+      ),
     );
 
     //? M O B I L E   L A Y O U T
@@ -79,19 +84,23 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
             _buildAddNewTask(),
           ],
         ),
-        appBar: AppBar(
-          actions: [
-            _buildLodingWidget(),
-          ],
-          title: Text(DateConvertUtils.formate(widget.todo.reminderTime)),
-        ),
+        appBar: appBar,
         body: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              _buildStremBuilder(),
-              _buildSubTasksWidget(),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildTodoTitleAndDiscreption(),
+                const SizedBox(height: 12),
+                SubtaskListBuilderWidget(
+                  todoID: widget.id,
+                  stream: Backend.fetchTodoSubTasks(widget.id),
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
           ),
         ),
       ),
@@ -103,9 +112,16 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildStremBuilder(),
-            _buildSubTasksWidget(),
+            _buildTodoTitleAndDiscreption(),
+            const SizedBox(height: 12),
+            SubtaskListBuilderWidget(
+              todoID: widget.id,
+              stream: Backend.fetchTodoSubTasks(widget.id),
+            ),
+            const SizedBox(height: 12),
             _buildAddNewTask(),
             _buildDeleteTodoButton(),
           ],
@@ -138,18 +154,7 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
     );
   }
 
-  Padding _buildLodingWidget() {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Consumer(
-        builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          return const CircularLoadingWidget();
-        },
-      ),
-    );
-  }
-
-  void _updateTodoTitle(String? newTitle, WidgetRef ref) async {
+  void _updateTodoTitle(String? newTitle) async {
     if (newTitle != null) {
       ref.read(loadingProvider.notifier).state = true;
       await Backend.updateDocumentTitle(newTitle, widget.id);
@@ -157,7 +162,7 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
     }
   }
 
-  void _updateTodoDescription(String? newDescription, WidgetRef ref) async {
+  void _updateTodoDescription(String? newDescription) async {
     if (newDescription != null) {
       ref.read(loadingProvider.notifier).state = true;
       await Backend.updateDocumentDescription(newDescription, widget.id);
@@ -165,7 +170,7 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
     }
   }
 
-  void _addNewSubTask(WidgetRef ref) async {
+  void _addNewSubTask() async {
     if (_subTaskController.text.isNotEmpty) {
       ref.read(loadingProvider.notifier).state = true;
       await Backend.addSubTask(
@@ -182,7 +187,7 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
     }
   }
 
-  StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> _buildStremBuilder() {
+  StreamBuilder<DocumentSnapshot<Map<String, dynamic>>> _buildTodoTitleAndDiscreption() {
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       stream: Backend.fetchTodoDetails(widget.id),
       builder: (
@@ -193,105 +198,79 @@ class _TodoDetailsViewState extends State<TodoDetailsView> {
           return const Text('Something went wrong');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const CircularProgressIndicator.adaptive();
         }
 
-        return Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //Title
-                TextField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 3,
-                  minLines: 1,
-                  controller: _titleController,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    color: Colors.purple,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (String? value) => _updateTodoTitle(value, ref),
-                ),
-
-                // Discription
-                const Text(
-                  "Description :",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w100),
-                ),
-                TextField(
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1, //Normal textInputField will be displayed
-                  maxLines: kIsWeb ? 10 : 5, // when user presses enter it will adapt to it
-                  controller: _discriptionController,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (String? value) => _updateTodoDescription(value, ref),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Sub Tasks : ",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w100,
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Column _buildSubTasksWidget() {
-    return Column(
-      children: [
-        const SizedBox(height: 12),
-        SizedBox(
-          height: 300,
-          child: SubtaskListBuilderWidget(
-            todoID: widget.id,
-            stream: Backend.fetchTodoSubTasks(widget.id),
-          ),
-        ),
-        const SizedBox(height: 12),
-      ],
-    );
-  }
-
-  Consumer _buildAddNewTask() {
-    return Consumer(
-      builder: (context, ref, child) {
         return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InputTextField(
-              controller: _subTaskController,
-              keyboardType: TextInputType.name,
+            //Title
+            TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: 3,
+              minLines: 1,
+              controller: _titleController,
+              style: const TextStyle(
+                fontSize: 32,
+                color: Colors.purple,
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              onChanged: (String? value) => _updateTodoTitle(value),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _addNewSubTask(ref),
-              child: const Text(
-                "Add new Sub Tasks",
+
+            // Discription
+            const Text(
+              "Description :",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w100),
+            ),
+            TextField(
+              keyboardType: TextInputType.multiline,
+              minLines: 1, //Normal textInputField will be displayed
+              maxLines: kIsWeb ? 10 : 5, // when user presses enter it will adapt to it
+              controller: _discriptionController,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              onChanged: (String? value) => _updateTodoDescription(value),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              "Sub Tasks : ",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w100,
               ),
             ),
-            const SizedBox(height: 16),
           ],
         );
       },
+    );
+  }
+
+  Column _buildAddNewTask() {
+    return Column(
+      children: [
+        InputTextField(
+          controller: _subTaskController,
+          keyboardType: TextInputType.name,
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: _addNewSubTask,
+          child: const Text(
+            "Add new Sub Tasks",
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }

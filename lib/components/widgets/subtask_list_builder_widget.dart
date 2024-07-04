@@ -38,14 +38,16 @@ class SubtaskListBuilderWidget extends ConsumerWidget {
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: stream,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      builder: (BuildContext context,
+          AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
         if (snapshot.hasError) {
           return Text("Error : ${snapshot.error}");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator.adaptive();
         }
-        return ListView(
+
+        return Column(
           children: snapshot.data!.docs.map(
             (DocumentSnapshot document) {
               final TodoItems todoItem = TodoItems.fromJson(
@@ -65,7 +67,8 @@ class SubtaskListBuilderWidget extends ConsumerWidget {
                         : const Icon(
                             Icons.circle_outlined,
                           ),
-                    onPressed: () => updateSubTaskCompleted(document.id, !todoItem.completed),
+                    onPressed: () => updateSubTaskCompleted(
+                        document.id, !todoItem.completed),
                   ),
                   title: Text(todoItem.title),
                   trailing: IconButton(

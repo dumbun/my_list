@@ -190,24 +190,18 @@ class _AddTodoWidgetState extends State<AddTodoWidget> {
                       ],
                     ),
                     const SizedBox(height: 26),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      height: 170,
-                      child: Visibility(
-                        visible: _subTasks.isEmpty,
-                        replacement: ListView.builder(
-                          itemCount: _subTasks.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              leading: const Icon(Icons.circle_outlined),
-                              title: Text(
-                                _subTasks[index]['title'],
-                              ),
-                            );
+                    Visibility(
+                      visible: _subTasks.isEmpty,
+                      replacement: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _subTasks.map(
+                          (Map<String, dynamic> e) {
+                            return Text(e['title']);
                           },
-                        ),
-                        child: const Text("No Sub Tasks Added"),
+                        ).toList(),
                       ),
+                      child: const Text("No Sub Tasks Added"),
                     ),
                   ],
                 ),

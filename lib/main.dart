@@ -34,7 +34,11 @@ void main() async {
   );
   await dotenv.load(fileName: "key.env");
   GoogleFonts();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
